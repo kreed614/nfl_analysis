@@ -1,0 +1,3 @@
+This is the module that updates weekly stats into the db.
+It's intended to be run Monday evening after the game or on Tuesdays
+An exception is raised if it's run outside of those times
