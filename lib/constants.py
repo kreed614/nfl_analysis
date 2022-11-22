@@ -6,7 +6,7 @@ from lib.db_utils import ReadWrite
 
 @dataclass
 class Inputs:
-    WEEK = 9
+    WEEK = 11  # the most recent completed week
     YEAR = 2022
     if WEEK > 17:
         SEASON = 'postseason'
@@ -27,6 +27,8 @@ class Files:
     FILTERED_STATS = ReadWrite('./db/filtered_stats.json').read()
     PROCESSED_STATS = ReadWrite('./db/processed_stats.json').read()
     RESULTS = ReadWrite('./db/results.json').read()
+    TIMESTAMPS = ReadWrite('./db/timestamps.json').read()
+    INJURIES = ReadWrite('./db/injuries.json').read()
 
 
 @dataclass
@@ -57,7 +59,7 @@ class Lists:
     ]
 
     offense_positions = [
-        "Wide Receiver", "Quarterback", "Tight End", "Running Back", "Fullback"
+        "wide receiver", "quarterback", "tight end", "running back", "bullback"
     ]
 
     # maybe incorporate fullback
@@ -75,6 +77,10 @@ class Lists:
 
     general_defense_stats = [
         "gamesPlayed", "fumblesForced", "fumblesRecovered", "totalTackles", "interceptionTouchdowns"
+    ]
+
+    FANTASY_TEAM = [
+        "4241479", "15795", "2976212", "3043078", "15807", "4036133", "4035538", "4047650", "3045144", "4038941", "2580216", "3128429", "15920", "4360078"
     ]
 
 
