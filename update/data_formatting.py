@@ -58,6 +58,7 @@ def depth_chart(data: Dict) -> Dict:
                     "name": athlete's first and last name,
                     "status": the health status of the athlete,
                     "injury date": if hurt, date of the injury,
+                    "ref": reference link to more injury information
                     "id": the ESPN ID for the athlete
                 },
                 "2": {...}
@@ -70,27 +71,30 @@ def depth_chart(data: Dict) -> Dict:
     for items in data['items']:
         for position in items.get('positions'):
             position_name = items['positions'][position]['position'].get(
-                'displayName')
+                'displayName').lower()
             depth_chart[position_name] = {}
             for athlete in items['positions'][position]['athletes']:
                 player = GetData(athlete['athlete']['$ref']
                                  ).query()
                 status = 'healthy'
-                date = 'n/a'
+                date = None
+                ref = None
                 if player.get("injuries"):
-                    status = player["injuries"][0].get('status')
+                    status = player["injuries"][0].get('status').lower()
                     date = player["injuries"][0].get('date')
+                    ref = player["injuries"][0].get('$ref')
 
                 depth_chart[position_name][str(athlete['rank'])] = {
                     "name": player.get("displayName").lower(),
                     "status": status,
                     "injury date": date,
+                    "ref": ref,
                     "id": player.get("id")
                 }
     return depth_chart
 
 
-def player_details(data: Dict, team: str) -> Dict:
+def player_details(**kwargs) -> Dict:
     """Sorts through each team's depth chart to build a similar
     dictionary, but with keys at the athlete level instead of the
     team level.
@@ -103,29 +107,24 @@ def player_details(data: Dict, team: str) -> Dict:
     Returns:
         Dict: The key details of each player
         {
-            "athlete1 id": {
-                "name": athletes first and last name,
-                "team": team name passed into the function,
-                "position": position played,
-                "depth": order in the team's depth chart, 
-                "status": health status,
-                "injury date": if injured, date of injury
-            }, 
-            "athlete2 id": {...},
+            "name": athletes first and last name,
+            "team": team name passed into the function,
+            "position": position played,
+            "depth": order in the team's depth chart, 
+            "status": health status,
+            "injury date": if injured, date of injury
+            "ref": reference link to more injury information
         }
     """
-    player_details = {}
-    for position in data:
-        for rank in data[position]:
-            player_details[data[position][rank]['id']] = {
-                "name": data[position][rank]['name'],
-                "team": team,
-                "position": position.lower(),
-                "depth": rank,
-                "status": data[position][rank]['status'],
-                "injury_date": data[position][rank]['injury date'],
-            }
-    return player_details
+    return {
+        "name": kwargs['data'].get('name'),
+        "team": kwargs['team'],
+        "position": kwargs['position'].lower(),
+        "depth": kwargs['rank'],
+        "status": kwargs['data'].get('status'),
+        "injury_date": kwargs['data'].get('injury date'),
+        "ref": kwargs['data'].get('ref'),
+    }
 
 
 def stats(data: Dict) -> Dict:
